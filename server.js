@@ -7,6 +7,12 @@ var express = require("express"),
   //require the path nodejs module
   path = require("path");
 
+var fs = require("fs");
+
+var csv = require("fast-csv");
+
+var ws = fs.createWriteStream("user.csv");
+
 //support parsing of application/json type post data
 app.use(bodyParser.json());
 
@@ -29,6 +35,11 @@ app.post("/form", function(req, res) {
         emailAddress: req.body.emailAddress || null
       })
     );
+    csv
+      .write([[req.body.firstName, req.body.lastName, req.body.emailAddress]], {
+        headers: true
+      })
+      .pipe(ws);
   }, 1000);
 
   //debugging output for the terminal
